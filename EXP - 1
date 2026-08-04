@@ -1,1 +1,16 @@
 
+data = [
+    ['Sunny', 'Warm', 'Yes'],
+    ['Sunny', 'Cold', 'Yes'],
+    ['Rainy', 'Warm', 'No']
+]
+
+h = data[0][:-1]
+
+for sample in data:
+    if sample[-1] == 'Yes':
+        for i, value in enumerate(h):
+            if value != sample[i]:
+                h[i] = '?'
+
+print("Final Hypothesis:", h)
