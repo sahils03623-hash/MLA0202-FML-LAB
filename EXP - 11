@@ -1,0 +1,12 @@
+credit_score = int(input("Enter your credit score: "))
+
+if credit_score >= 750:
+    print("Credit Score: Excellent")
+elif credit_score >= 700:
+    print("Credit Score: Good")
+elif credit_score >= 650:
+    print("Credit Score: Fair")
+elif credit_score >= 600:
+    print("Credit Score: Poor")
+else:
+    print("Credit Score: Very Poor")
