@@ -1,0 +1,82 @@
+# Perceptron Based IRIS Classification
+
+from sklearn.datasets import load_iris
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.linear_model import Perceptron
+from sklearn.metrics import accuracy_score, classification_report
+import pandas as pd
+
+# Load Iris dataset
+iris = load_iris()
+
+X = iris.data
+y = iris.target
+
+# Split the dataset into training and testing data
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y,
+    test_size=0.2,
+    random_state=42,
+    stratify=y
+)
+
+# Standardize the features
+scaler = StandardScaler()
+
+X_train = scaler.fit_transform(X_train)
+X_test = scaler.transform(X_test)
+
+# Create Perceptron model
+model = Perceptron(
+    max_iter=1000,
+    eta0=0.1,
+    random_state=42
+)
+
+# Train the model
+model.fit(X_train, y_train)
+
+# Predict test data
+y_pred = model.predict(X_test)
+
+# Calculate accuracy
+accuracy = accuracy_score(y_test, y_pred)
+
+print("Perceptron Based IRIS Classification")
+print("-------------------------------------")
+print("Accuracy:", accuracy)
+
+# Display classification report
+print("\nClassification Report:")
+print(classification_report(
+    y_test,
+    y_pred,
+    target_names=iris.target_names,
+    zero_division=0
+))
+
+# Take input for a new flower
+print("\nEnter the measurements of a new Iris flower:")
+
+sepal_length = float(input("Sepal Length (cm): "))
+sepal_width = float(input("Sepal Width (cm): "))
+petal_length = float(input("Petal Length (cm): "))
+petal_width = float(input("Petal Width (cm): "))
+
+# Create DataFrame
+new_flower = pd.DataFrame({
+    "sepal length (cm)": [sepal_length],
+    "sepal width (cm)": [sepal_width],
+    "petal length (cm)": [petal_length],
+    "petal width (cm)": [petal_width]
+})
+
+# Standardize new flower data
+new_flower_scaled = scaler.transform(new_flower)
+
+# Predict flower species
+prediction = model.predict(new_flower_scaled)
+
+print("\nPredicted Iris Flower:",
+      iris.target_names[prediction[0]])
