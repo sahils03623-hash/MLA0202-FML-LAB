@@ -1,0 +1,91 @@
+# Mobile Price Prediction using Random Forest Classifier
+
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import accuracy_score
+
+# Create mobile phone dataset
+data = {
+    "RAM": [2, 2, 3, 3, 4, 4, 4, 6, 6, 6,
+            8, 8, 8, 8, 12, 12, 12, 16, 16, 16],
+
+    "Battery": [2500, 2800, 3000, 3200, 3500, 3800, 4000, 4000, 4200, 4500,
+                4500, 5000, 5000, 5200, 5000, 5500, 6000, 5500, 6000, 6500],
+
+    "Storage": [32, 32, 64, 64, 64, 64, 128, 128, 128, 128,
+                128, 256, 256, 256, 256, 256, 512, 512, 512, 512],
+
+    "Camera": [8, 8, 12, 12, 13, 16, 16, 20, 24, 24,
+               32, 32, 48, 50, 50, 64, 64, 108, 108, 200],
+
+    "Price_Range": [0, 0, 0, 0, 1, 1, 1, 1, 1, 1,
+                    2, 2, 2, 2, 2, 2, 3, 3, 3, 3]
+}
+
+# Convert data into DataFrame
+df = pd.DataFrame(data)
+
+print("Mobile Price Dataset")
+print(df)
+
+# Select input features and target
+X = df[["RAM", "Battery", "Storage", "Camera"]]
+y = df["Price_Range"]
+
+# Split the dataset
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y,
+    test_size=0.20,
+    random_state=42,
+    stratify=y
+)
+
+# Create Random Forest model
+model = RandomForestClassifier(
+    n_estimators=100,
+    random_state=42
+)
+
+# Train the model
+model.fit(X_train, y_train)
+
+# Predict test data
+y_pred = model.predict(X_test)
+
+# Calculate accuracy
+accuracy = accuracy_score(y_test, y_pred)
+
+print("\nMobile Price Prediction using Random Forest")
+print("--------------------------------------------")
+print("Accuracy:", accuracy)
+
+# Get new mobile specifications
+print("\nEnter Mobile Specifications")
+
+ram = int(input("RAM (GB): "))
+battery = int(input("Battery Capacity (mAh): "))
+storage = int(input("Storage (GB): "))
+camera = int(input("Camera (MP): "))
+
+# Create DataFrame for new mobile
+new_mobile = pd.DataFrame({
+    "RAM": [ram],
+    "Battery": [battery],
+    "Storage": [storage],
+    "Camera": [camera]
+})
+
+# Predict price range
+prediction = model.predict(new_mobile)
+
+# Define price categories
+price_ranges = {
+    0: "Low",
+    1: "Medium",
+    2: "High",
+    3: "Very High"
+}
+
+print("\nPredicted Mobile Price Range:",
+      price_ranges[prediction[0]])
