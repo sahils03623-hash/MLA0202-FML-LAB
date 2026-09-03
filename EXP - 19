@@ -1,0 +1,103 @@
+# Naive Bayes Classification for Bank Loan Prediction
+
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import LabelEncoder
+from sklearn.naive_bayes import GaussianNB
+from sklearn.metrics import accuracy_score, classification_report
+
+# Create the dataset
+data = {
+    "Age": [25, 30, 35, 40, 45, 28, 32, 38, 42, 50,
+            27, 33, 37, 44, 48, 29, 36, 41, 46, 52],
+
+    "Income": [25000, 35000, 45000, 60000, 75000, 30000, 40000, 50000,
+               65000, 80000, 28000, 42000, 55000, 70000, 85000,
+               32000, 48000, 62000, 78000, 90000],
+
+    "LoanAmount": [100000, 150000, 200000, 250000, 300000,
+                   120000, 180000, 220000, 280000, 350000,
+                   110000, 170000, 230000, 270000, 320000,
+                   140000, 210000, 260000, 310000, 400000],
+
+    "CreditScore": [650, 680, 720, 750, 800, 660, 700, 730, 770, 820,
+                    640, 710, 740, 760, 810, 670, 725, 755, 790, 830],
+
+    "Loan_Status": [
+        "No", "No", "Yes", "Yes", "Yes",
+        "No", "Yes", "Yes", "Yes", "Yes",
+        "No", "Yes", "Yes", "Yes", "Yes",
+        "No", "Yes", "Yes", "Yes", "Yes"
+    ]
+}
+
+# Convert data into DataFrame
+df = pd.DataFrame(data)
+
+print("Bank Loan Dataset")
+print(df)
+
+# Encode target variable
+encoder = LabelEncoder()
+df["Loan_Status"] = encoder.fit_transform(df["Loan_Status"])
+
+# Select features and target
+X = df[["Age", "Income", "LoanAmount", "CreditScore"]]
+y = df["Loan_Status"]
+
+# Split dataset
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y,
+    test_size=0.20,
+    random_state=42,
+    stratify=y
+)
+
+# Create Naive Bayes model
+model = GaussianNB()
+
+# Train the model
+model.fit(X_train, y_train)
+
+# Predict test data
+y_pred = model.predict(X_test)
+
+# Calculate accuracy
+accuracy = accuracy_score(y_test, y_pred)
+
+print("\nNaive Bayes Bank Loan Prediction")
+print("--------------------------------")
+print("Accuracy:", accuracy)
+
+# Display classification report
+print("\nClassification Report:")
+print(classification_report(
+    y_test,
+    y_pred,
+    target_names=encoder.classes_,
+    zero_division=0
+))
+
+# Get new applicant details
+print("\nEnter Applicant Details")
+
+age = int(input("Age: "))
+income = float(input("Monthly Income: "))
+loan_amount = float(input("Loan Amount: "))
+credit_score = int(input("Credit Score: "))
+
+# Create DataFrame for new applicant
+new_applicant = pd.DataFrame({
+    "Age": [age],
+    "Income": [income],
+    "LoanAmount": [loan_amount],
+    "CreditScore": [credit_score]
+})
+
+# Predict loan status
+prediction = model.predict(new_applicant)
+
+# Convert prediction back to Yes/No
+result = encoder.inverse_transform(prediction)
+
+print("\nPredicted Loan Status:", result[0])
